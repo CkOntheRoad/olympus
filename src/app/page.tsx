@@ -172,13 +172,19 @@ export default function Home() {
  {/* HERO */}
 <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
   <div className="absolute inset-0 overflow-hidden">
-    {/* BASE IMAGE */}
+    {/* Desktop background */}
     <div
-      className="parallax-bg absolute inset-0 bg-cover bg-center opacity-80"
+      className="parallax-bg absolute inset-0 hidden bg-cover bg-center opacity-80 md:block"
       style={{ backgroundImage: "url('/olympus2.png')" }}
     ></div>
 
-    {/* OVERLAY IMAGE */}
+    {/* Mobile background */}
+    <div
+      className="parallax-bg absolute inset-0 bg-cover bg-center opacity-80 md:hidden"
+      style={{ backgroundImage: "url('/olympus-mobile.png')" }}
+    ></div>
+
+    {/* Veil */}
     <div
       className="absolute inset-y-0 left-0 w-2/3 bg-contain bg-left bg-no-repeat opacity-30 mix-blend-screen pointer-events-none"
       style={{
@@ -187,12 +193,14 @@ export default function Home() {
       }}
     ></div>
 
-    {/* NEW MIST */}
+    {/* Mist */}
     <div className="hero-mist"></div>
   </div>
 
-  <div className="absolute inset-0 bg-black/60"></div>
+  {/* Dark overlay */}
+  <div className="absolute inset-0 bg-black/40"></div>
 
+  {/* Glow overlay */}
   <div
     className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,215,0,0.25),transparent_40%)]"
     style={{ animation: "glowPulse 6s ease-in-out infinite" }}
@@ -203,7 +211,7 @@ export default function Home() {
       A Divine Invitation
     </p>
 
-    <h1 className="text-4xl font-semibold leading-tight tracking-[0.05em] drop-shadow-[0_0_20px_rgba(255,215,0,0.15)] sm:text-6xl md:text-7xl">
+    <h1 className="text-5xl font-semibold tracking-[0.05em] leading-tight drop-shadow-[0_0_20px_rgba(255,215,0,0.15)] sm:text-6xl md:text-7xl">
       The Gathering on Olympus
     </h1>
 
@@ -215,15 +223,13 @@ export default function Home() {
       You already know why you are here.
     </p>
 
-    <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row">
+    <div className="mt-14 flex flex-col items-center justify-center gap-4">
       <a
         href="#summons"
         className="olympus-button rounded-full border border-yellow-200/40 bg-yellow-200/10 px-6 py-3 text-sm uppercase tracking-[0.25em] text-yellow-100 transition hover:bg-yellow-200/20"
       >
         Answer the Summons
       </a>
-
-
     </div>
   </div>
 </section>
@@ -308,12 +314,12 @@ export default function Home() {
   {/* background image */}
   <div className="absolute inset-0">
     <div
-      className="absolute inset-0 bg-cover bg-center opacity-30"
+      className="absolute inset-0 bg-cover bg-center opacity-40"
       style={{ backgroundImage: "url('/music.png')" }}
     ></div>
 
     {/* cool dark overlay */}
-    <div className="absolute inset-0 bg-black/75"></div>
+    <div className="absolute inset-0 bg-black/45"></div>
 
     {/* soft white glow (different from feast!) */}
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_50%)]"></div>
@@ -364,12 +370,12 @@ export default function Home() {
   {/* 🔥 background image */}
   <div className="absolute inset-0">
     <div
-      className="absolute inset-0 bg-cover bg-center opacity-40"
+      className="absolute inset-0 bg-cover bg-center opacity-35"
       style={{ backgroundImage: "url('/feast.png')" }}
     ></div>
 
     {/* dark overlay */}
-    <div className="absolute inset-0 bg-black/70"></div>
+    <div className="absolute inset-0 bg-black/40"></div>
 
     {/* warm glow */}
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(255,180,60,0.25),transparent_60%)]"></div>
