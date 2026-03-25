@@ -1,20 +1,21 @@
 import Link from "next/link";
-import fs from "fs/promises";
-import path from "path";
+import { supabase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 export default async function OfferingsPage() {
-  const filePath = path.join(process.cwd(), "data", "offerings.json");
-  const fileContents = await fs.readFile(filePath, "utf8");
-  const offerings = JSON.parse(fileContents);
+  const { data: offerings, error } = await supabase
+    .from("offerings")
+    .select("id, name, category, offering, attendance")
+    .eq("attendance", "Yes, I will ascend")
+    .not("name", "is", null)
+    .not("offering", "is", null)
+    .order("created_at", { ascending: false });
 
-  const validOfferings = offerings.filter(
-    (item: { name?: string; offering?: string; attendance?: string }) =>
-      item.attendance === "Yes, I will ascend" &&
-      item.name?.trim() &&
-      item.offering?.trim()
-  );
+  if (error) {
+    console.error(error);
+    throw new Error("Failed to load offerings");
+  }
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -57,26 +58,17 @@ export default async function OfferingsPage() {
             </thead>
 
             <tbody className="text-gray-200">
-              {validOfferings.length > 0 ? (
-                validOfferings.map(
-                  (
-                    item: {
-                      name: string;
-                      category: string;
-                      offering: string;
-                    },
-                    index: number
-                  ) => (
-                    <tr
-                      key={index}
-                      className="border-b border-white/10 last:border-b-0"
-                    >
-                      <td className="px-6 py-4">{item.name}</td>
-                      <td className="px-6 py-4">{item.category}</td>
-                      <td className="px-6 py-4">{item.offering}</td>
-                    </tr>
-                  )
-                )
+              {offerings && offerings.length > 0 ? (
+                offerings.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="border-b border-white/10 last:border-b-0"
+                  >
+                    <td className="px-6 py-4">{item.name}</td>
+                    <td className="px-6 py-4">{item.category}</td>
+                    <td className="px-6 py-4">{item.offering}</td>
+                  </tr>
+                ))
               ) : (
                 <tr>
                   <td className="px-6 py-6 text-gray-400" colSpan={3}>

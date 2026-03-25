@@ -443,12 +443,15 @@ export default function Home() {
                 body: JSON.stringify(data),
               });
 
-              if (res.ok) {
-                alert("Your offering has been recorded ⚡");
-                form.reset();
-              } else {
-                alert("Something went wrong");
-              }
+const result = await res.json();
+
+if (res.ok) {
+  alert(result.warning || "Your offering has been recorded ⚡");
+  form.reset();
+} else {
+  alert(result.error || "Something went wrong");
+}
+
             }}
             className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-sm"
           >

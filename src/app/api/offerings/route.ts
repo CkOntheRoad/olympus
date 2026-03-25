@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
 import { Resend } from "resend";
+import { supabase } from "@/lib/supabase";
 import crypto from "crypto";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-const filePath = path.join(process.cwd(), "data", "offerings.json");
 
 type OfferingEntry = {
   id: string;
@@ -22,46 +19,77 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    const raw = await fs.readFile(filePath, "utf-8");
-    const entries = JSON.parse(raw) as OfferingEntry[];
-
     const newEntry: OfferingEntry = {
       id: crypto.randomUUID(),
-      name: data.name,
-      email: data.email,
-      attendance: data.attendance,
-      category: data.category,
-      offering: data.offering,
-      note: data.note,
+      name: data.name?.trim() || "",
+      email: data.email?.trim() || "",
+      attendance: data.attendance || "",
+      category: data.category?.trim() || "",
+      offering: data.offering?.trim() || "",
+      note: data.note?.trim() || "",
     };
 
-    entries.push(newEntry);
+    if (!newEntry.name || !newEntry.email || !newEntry.attendance) {
+      return NextResponse.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
 
-    await fs.writeFile(filePath, JSON.stringify(entries, null, 2));
+    if (
+      newEntry.attendance === "Yes, I will ascend" &&
+      (!newEntry.category || !newEntry.offering)
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Offering details are required for attendees",
+        },
+        { status: 400 }
+      );
+    }
 
-    await resend.emails.send({
-      from: "Olympus <onboarding@resend.dev>",
-      to: newEntry.email,
-      subject: "Your Offering Has Been Accepted ⚡",
-      html: `
-        <h2>The Gods Acknowledge You</h2>
+    const { error: insertError } = await supabase.from("offerings").insert([
+      {
+        id: newEntry.id,
+        name: newEntry.name,
+        email: newEntry.email,
+        attendance: newEntry.attendance,
+        category: newEntry.category || null,
+        offering: newEntry.offering || null,
+        note: newEntry.note || null,
+      },
+    ]);
 
-  <p>${newEntry.name}, your presence has been noted.</p>
+    if (insertError) {
+      console.error("Supabase insert error:", insertError);
+      return NextResponse.json(
+        { success: false, error: "Failed to save offering" },
+        { status: 500 }
+      );
+    }
 
-  <p><strong>You bring:</strong> ${newEntry.offering || "No offering specified"}</p>
-  <p><strong>Category:</strong> ${newEntry.category || "None"}</p>
+    try {
+      await resend.emails.send({
+        from: "Olympus <onboarding@resend.dev>",
+        to: newEntry.email,
+        subject: "Your Offering Has Been Accepted ⚡",
+        html: `
+          <h2>The Gods Acknowledge You</h2>
+          <p>${newEntry.name}, your presence has been noted.</p>
+          <p><strong>You bring:</strong> ${newEntry.offering || "No offering specified"}</p>
+          <p><strong>Category:</strong> ${newEntry.category || "None"}</p>
+          <p>The feast awaits. Olympus prepares.</p>
+        `,
+      });
+    } catch (emailError) {
+      console.error("Resend email failed:", emailError);
 
-  <p>If fate changes, you may alter your offering here:</p>
-
-  <p>
-    <a href="http://localhost:3000/edit/${newEntry.id}">
-      Edit your offering
-    </a>
-  </p>
-
-  <p>The feast awaits. Olympus prepares.</p>
-      `,
-    });
+      return NextResponse.json({
+        success: true,
+        warning: "Offering saved, but confirmation email failed.",
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
