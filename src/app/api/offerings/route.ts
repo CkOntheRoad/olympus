@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import crypto from "crypto";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+
+if (!resendApiKey) {
+  throw new Error("Missing RESEND_API_KEY");
+}
+
+const resend = new Resend(resendApiKey);
 
 type OfferingEntry = {
   id: string;
@@ -49,7 +55,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { error: insertError } = await supabase.from("offerings").insert([
+    const { error: insertError } = await supabaseAdmin.from("offerings").insert([
       {
         id: newEntry.id,
         name: newEntry.name,
@@ -61,13 +67,14 @@ export async function POST(req: Request) {
       },
     ]);
 
-    if (insertError) {
-      console.error("Supabase insert error:", insertError);
-      return NextResponse.json(
-        { success: false, error: "Failed to save offering" },
-        { status: 500 }
-      );
-    }
+if (insertError) {
+  console.error("Supabase insert error:", insertError);
+  return NextResponse.json(
+    { success: false, error: insertError.message },
+    { status: 500 }
+  );
+}
+
 
     try {
       await resend.emails.send({
@@ -75,12 +82,21 @@ export async function POST(req: Request) {
         to: newEntry.email,
         subject: "Your Offering Has Been Accepted ⚡",
         html: `
-          <h2>The Gods Acknowledge You</h2>
-          <p>${newEntry.name}, your presence has been noted.</p>
-          <p><strong>You bring:</strong> ${newEntry.offering || "No offering specified"}</p>
-          <p><strong>Category:</strong> ${newEntry.category || "None"}</p>
-          <p>The feast awaits. Olympus prepares.</p>
-        `,
+  <h2>The Gods Acknowledge You</h2>
+  <p>${newEntry.name}, your presence has been noted.</p>
+  <p><strong>You bring:</strong> ${newEntry.offering || "No offering specified"}</p>
+  <p><strong>Category:</strong> ${newEntry.category || "None"}</p>
+
+  <p>If fate changes, you may alter your offering here:</p>
+
+  <p>
+   <a href="https://olympus-orpin.vercel.app/edit/${newEntry.id}">
+      Edit your offering
+    </a>
+  </p>
+
+  <p>The feast awaits. Olympus prepares.</p>
+`,
       });
     } catch (emailError) {
       console.error("Resend email failed:", emailError);

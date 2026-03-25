@@ -1,15 +1,22 @@
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
-
-const filePath = path.join(process.cwd(), "data", "offerings.json");
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
   try {
-    const raw = await fs.readFile(filePath, "utf-8");
-    const entries = JSON.parse(raw);
+    const { data, error } = await supabase
+      .from("offerings")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    return NextResponse.json(entries);
+    if (error) {
+      console.error("Error reading offerings:", error);
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(data ?? []);
   } catch (error) {
     console.error("Error reading offerings:", error);
     return NextResponse.json(
