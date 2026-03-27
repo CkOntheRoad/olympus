@@ -4,7 +4,8 @@ import crypto from "crypto";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 const resendApiKey = process.env.RESEND_API_KEY;
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://olympus-orpin.vercel.app";
+const appUrl =
+  process.env.NEXT_PUBLIC_APP_URL || "https://olympus-orpin.vercel.app";
 const adminEmail = process.env.ADMIN_EMAIL || "chriskyster@gmail.com";
 
 if (!resendApiKey) {
@@ -50,10 +51,7 @@ function escapeHtml(value: string): string {
 }
 
 function jsonError(message: string, status: number) {
-  return NextResponse.json(
-    { success: false, error: message },
-    { status }
-  );
+  return NextResponse.json({ success: false, error: message }, { status });
 }
 
 export async function POST(req: Request) {
@@ -129,34 +127,43 @@ export async function POST(req: Request) {
     const editUrl = `${appUrl}/edit/${newEntry.id}`;
 
     try {
-      await resend.emails.send({
-        from: "Olympus <onboarding@resend.dev>",
-        to: newEntry.email,
-        subject: "Your Offering Has Been Accepted ⚡",
-        html: `
-          <h2>The Gods Acknowledge You</h2>
-          <p>${escapedName}, your response has been recorded.</p>
-          <p><strong>Attendance:</strong> ${escapedAttendance}</p>
-          <p><strong>You bring:</strong> ${escapedOffering}</p>
-          <p><strong>Category:</strong> ${escapedCategory}</p>
-          <p><strong>Note:</strong> ${escapedNote}</p>
+      if (newEntry.attendance === ATTENDING) {
+        await resend.emails.send({
+          from: "Olympus <onboarding@resend.dev>",
+          to: newEntry.email,
+          subject: "Your Offering Has Been Accepted ⚡",
+          html: `
+            <h2>The Gods Acknowledge You</h2>
+            <p>${escapedName}, your response has been recorded.</p>
+            <p><strong>Attendance:</strong> ${escapedAttendance}</p>
+            <p><strong>You bring:</strong> ${escapedOffering}</p>
+            <p><strong>Category:</strong> ${escapedCategory}</p>
+            <p><strong>Note:</strong> ${escapedNote}</p>
 
-          <p>If fate changes, you may alter your offering here:</p>
+            <p>If fate changes, you may alter your offering here:</p>
 
-          <p>
-            <a href="${editUrl}">Edit your offering</a>
-          </p>
+            <p>
+              <a href="${editUrl}">Edit your offering</a>
+            </p>
 
-          <p>The feast awaits. Olympus prepares.</p>
-        `,
-      });
+            <p>The feast awaits. Olympus prepares.</p>
+          `,
+        });
+      }
 
       await resend.emails.send({
         from: "Olympus <onboarding@resend.dev>",
         to: adminEmail,
-        subject: "New Offering Submitted ⚡",
+        subject:
+          newEntry.attendance === ATTENDING
+            ? "New Offering Submitted ⚡"
+            : "Guest Declined the Summons ⚡",
         html: `
-          <h2>New Offering Received</h2>
+          <h2>${
+            newEntry.attendance === ATTENDING
+              ? "New Offering Received"
+              : "A Guest Declined"
+          }</h2>
           <p><strong>Name:</strong> ${escapedName}</p>
           <p><strong>Email:</strong> ${escapedEmail}</p>
           <p><strong>Attendance:</strong> ${escapedAttendance}</p>

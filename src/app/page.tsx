@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [attendance, setAttendance] = useState("Yes, I will ascend");
@@ -13,6 +13,53 @@ export default function Home() {
     type: null,
     text: "",
   });
+
+  const lastZeusTrigger = useRef(0);
+
+  const createSpark = (x: number, y: number) => {
+    const spark = document.createElement("div");
+    spark.className = "spark";
+    spark.style.left = `${x}px`;
+    spark.style.top = `${y}px`;
+    spark.style.setProperty("--dx", `${(Math.random() - 0.5) * 80}px`);
+    spark.style.setProperty("--dy", `${(Math.random() - 0.5) * 80}px`);
+
+    document.body.appendChild(spark);
+    window.setTimeout(() => spark.remove(), 700);
+  };
+
+  const triggerZeus = () => {
+    const now = Date.now();
+
+    if (now - lastZeusTrigger.current < 6000) return;
+    lastZeusTrigger.current = now;
+
+    const storm = document.createElement("div");
+    storm.className = "storm-flash";
+    document.body.appendChild(storm);
+
+    const mainBolt = document.createElement("div");
+    mainBolt.className = "zeus-bolt";
+    document.body.appendChild(mainBolt);
+
+    const branchBolt = document.createElement("div");
+    branchBolt.className = "zeus-bolt branch";
+    document.body.appendChild(branchBolt);
+
+    const message = document.createElement("div");
+    message.className = "zeus-message";
+    message.textContent = "Zeus is watching";
+    document.body.appendChild(message);
+
+    for (let i = 0; i < 18; i++) {
+      createSpark(window.innerWidth / 2, window.innerHeight * 0.28);
+    }
+
+    window.setTimeout(() => storm.remove(), 900);
+    window.setTimeout(() => mainBolt.remove(), 900);
+    window.setTimeout(() => branchBolt.remove(), 800);
+    window.setTimeout(() => message.remove(), 2200);
+  };
 
   useEffect(() => {
     const elements = document.querySelectorAll(".reveal");
@@ -29,18 +76,6 @@ export default function Home() {
     );
 
     elements.forEach((el) => observer.observe(el));
-
-    const createSpark = (x: number, y: number) => {
-      const spark = document.createElement("div");
-      spark.className = "spark";
-      spark.style.left = `${x}px`;
-      spark.style.top = `${y}px`;
-      spark.style.setProperty("--dx", `${(Math.random() - 0.5) * 80}px`);
-      spark.style.setProperty("--dy", `${(Math.random() - 0.5) * 80}px`);
-
-      document.body.appendChild(spark);
-      window.setTimeout(() => spark.remove(), 700);
-    };
 
     const handleClick = (e: MouseEvent) => {
       for (let i = 0; i < 8; i++) {
@@ -107,41 +142,6 @@ export default function Home() {
     const particleInterval = window.setInterval(() => {
       createParticle();
     }, window.innerWidth < 768 ? 900 : 500);
-
-    let lastZeusTrigger = 0;
-
-    const triggerZeus = () => {
-      const now = Date.now();
-
-      if (now - lastZeusTrigger < 6000) return;
-      lastZeusTrigger = now;
-
-      const storm = document.createElement("div");
-      storm.className = "storm-flash";
-      document.body.appendChild(storm);
-
-      const mainBolt = document.createElement("div");
-      mainBolt.className = "zeus-bolt";
-      document.body.appendChild(mainBolt);
-
-      const branchBolt = document.createElement("div");
-      branchBolt.className = "zeus-bolt branch";
-      document.body.appendChild(branchBolt);
-
-      const message = document.createElement("div");
-      message.className = "zeus-message";
-      message.textContent = "Zeus is watching";
-      document.body.appendChild(message);
-
-      for (let i = 0; i < 18; i++) {
-        createSpark(window.innerWidth / 2, window.innerHeight * 0.28);
-      }
-
-      window.setTimeout(() => storm.remove(), 900);
-      window.setTimeout(() => mainBolt.remove(), 900);
-      window.setTimeout(() => branchBolt.remove(), 800);
-      window.setTimeout(() => message.remove(), 2200);
-    };
 
     const handleKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
@@ -402,8 +402,9 @@ export default function Home() {
             </p>
 
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-400">
-              A confirmation will be sent to your email, and you may edit your
-              offering later through your personal link.
+              {attendance === "Yes, I will ascend"
+                ? "A confirmation will be sent to your email, and you may edit your offering later through your personal link."
+                : "Olympus will note your absence. Even refusal reaches the gods."}
             </p>
           </div>
 
@@ -440,19 +441,30 @@ export default function Home() {
                 const result = await res.json();
 
                 if (res.ok) {
-                  setFormMessage({
-                    type: "success",
-                    text: result.warning || "Your offering has been recorded ⚡",
-                  });
-                  form.reset();
-                  setAttendance("Yes, I will ascend");
+                  if (selectedAttendance === "Yes, I will ascend") {
+                    setFormMessage({
+                      type: "success",
+                      text: result.warning || "Your offering has been recorded ⚡",
+                    });
+                    form.reset();
+                    setAttendance("Yes, I will ascend");
+                  } else {
+                    triggerZeus();
+                    setFormMessage({
+                      type: "success",
+                      text: "Fine, walk away, but Zeus will be watching you 😏",
+                    });
+                    form.reset();
+                    setAttendance("No, fate keeps me away");
+                  }
                 } else {
                   setFormMessage({
                     type: "error",
                     text: result.error || "Something went wrong",
                   });
                 }
-              } catch {
+              } catch (err) {
+                console.error(err);
                 setFormMessage({
                   type: "error",
                   text: "Something went wrong. Please try again.",
@@ -589,9 +601,17 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="olympus-button w-full rounded-full border border-yellow-200/40 bg-yellow-200/10 px-6 py-3 text-sm uppercase tracking-[0.25em] text-yellow-100 transition hover:bg-yellow-200/20 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                className={`olympus-button w-full rounded-full px-6 py-3 text-sm uppercase tracking-[0.25em] transition sm:w-auto disabled:cursor-not-allowed disabled:opacity-60 ${
+                  attendance === "Yes, I will ascend"
+                    ? "border border-yellow-200/40 bg-yellow-200/10 text-yellow-100 hover:bg-yellow-200/20"
+                    : "border border-red-400/40 bg-red-500/10 text-red-200 hover:bg-red-500/20 hover:shadow-[0_0_28px_rgba(255,80,80,0.45)]"
+                }`}
               >
-                {isSubmitting ? "Consulting Olympus..." : "Make Your Offering"}
+                {isSubmitting
+                  ? "Consulting Olympus..."
+                  : attendance === "Yes, I will ascend"
+                    ? "Make Your Offering"
+                    : "Stay Among Mortals"}
               </button>
 
               <Link
