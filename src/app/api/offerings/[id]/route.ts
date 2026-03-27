@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 const ATTENDING = "Yes, I will ascend";
@@ -15,18 +15,16 @@ function cleanString(value: unknown): string {
 }
 
 function jsonError(message: string, status: number) {
-  return NextResponse.json(
-    { success: false, error: message },
-    { status }
-  );
+  return NextResponse.json({ success: false, error: message }, { status });
 }
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+export async function GET(request: NextRequest, context: RouteContext) {
   try {
-    const id = params.id;
+    const { id } = await context.params;
 
     if (!id) {
       return jsonError("Missing offering ID", 400);
@@ -60,18 +58,15 @@ export async function GET(
   }
 }
 
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, context: RouteContext) {
   try {
-    const id = params.id;
+    const { id } = await context.params;
 
     if (!id) {
       return jsonError("Missing offering ID", 400);
     }
 
-    const body = await req.json();
+    const body = await request.json();
 
     const rawAttendance = cleanString(body.attendance);
 
