@@ -1,50 +1,132 @@
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
-type OfferingEntry = {
-  id: string;
-  name: string;
-  email: string;
-  attendance: string;
-  category: string;
-  offering: string;
-  note: string;
-};
+const ATTENDING = "Yes, I will ascend";
+const NOT_ATTENDING = "No, fate keeps me away";
 
-const filePath = path.join(process.cwd(), "data", "offerings.json");
+const VALID_ATTENDANCE = [ATTENDING, NOT_ATTENDING] as const;
+const VALID_CATEGORIES = ["Side Dish", "Drinks"] as const;
+
+type AttendanceValue = (typeof VALID_ATTENDANCE)[number];
+type CategoryValue = (typeof VALID_CATEGORIES)[number];
+
+function cleanString(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function jsonError(message: string, status: number) {
+  return NextResponse.json(
+    { success: false, error: message },
+    { status }
+  );
+}
+
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = params.id;
+
+    if (!id) {
+      return jsonError("Missing offering ID", 400);
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("offerings")
+      .select("id, name, email, attendance, category, offering, note")
+      .eq("id", id)
+      .single();
+
+    if (error || !data) {
+      return jsonError("Offering not found", 404);
+    }
+
+    return NextResponse.json({
+      success: true,
+      entry: {
+        id: data.id,
+        name: data.name ?? "",
+        email: data.email ?? "",
+        attendance: data.attendance ?? "",
+        category: data.category ?? "",
+        offering: data.offering ?? "",
+        note: data.note ?? "",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching offering:", error);
+    return jsonError("Failed to fetch offering", 500);
+  }
+}
 
 export async function POST(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await context.params;
-    const data = await req.json();
+    const id = params.id;
 
-    const raw = await fs.readFile(filePath, "utf-8");
-    const entries = JSON.parse(raw) as OfferingEntry[];
+    if (!id) {
+      return jsonError("Missing offering ID", 400);
+    }
 
-    const updatedEntries = entries.map((entry) =>
-      entry.id === id
-        ? {
-            ...entry,
-            attendance: data.attendance,
-            category: data.category,
-            offering: data.offering,
-            note: data.note,
-          }
-        : entry
-    );
+    const body = await req.json();
 
-    await fs.writeFile(filePath, JSON.stringify(updatedEntries, null, 2));
+    const rawAttendance = cleanString(body.attendance);
 
-    return NextResponse.json({ success: true });
+    if (!VALID_ATTENDANCE.includes(rawAttendance as AttendanceValue)) {
+      return jsonError("Invalid attendance value", 400);
+    }
+
+    const attendance = rawAttendance as AttendanceValue;
+    const isAttending = attendance === ATTENDING;
+
+    const category = cleanString(body.category);
+    const offering = cleanString(body.offering);
+    const note = cleanString(body.note);
+
+    if (isAttending) {
+      if (!category || !offering) {
+        return jsonError("Offering details are required for attendees", 400);
+      }
+
+      if (!VALID_CATEGORIES.includes(category as CategoryValue)) {
+        return jsonError("Invalid category", 400);
+      }
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("offerings")
+      .update({
+        attendance,
+        category: isAttending ? category : null,
+        offering: isAttending ? offering : null,
+        note: note || null,
+      })
+      .eq("id", id)
+      .select("id, name, email, attendance, category, offering, note")
+      .single();
+
+    if (error || !data) {
+      console.error("Supabase update error:", error);
+      return jsonError("Failed to update offering", 500);
+    }
+
+    return NextResponse.json({
+      success: true,
+      entry: {
+        id: data.id,
+        name: data.name ?? "",
+        email: data.email ?? "",
+        attendance: data.attendance ?? "",
+        category: data.category ?? "",
+        offering: data.offering ?? "",
+        note: data.note ?? "",
+      },
+    });
   } catch (error) {
     console.error("Error updating offering:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to update offering" },
-      { status: 500 }
-    );
+    return jsonError("Failed to update offering", 500);
   }
 }

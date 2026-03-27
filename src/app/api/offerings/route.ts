@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { supabaseAdmin } from "@/lib/supabase-admin";
 import crypto from "crypto";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 const resendApiKey = process.env.RESEND_API_KEY;
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://olympus-orpin.vercel.app";
+const adminEmail = process.env.ADMIN_EMAIL || "chriskyster@gmail.com";
 
 if (!resendApiKey) {
   throw new Error("Missing RESEND_API_KEY");
@@ -11,49 +13,95 @@ if (!resendApiKey) {
 
 const resend = new Resend(resendApiKey);
 
+const ATTENDING = "Yes, I will ascend";
+const NOT_ATTENDING = "No, fate keeps me away";
+
+const VALID_ATTENDANCE = [ATTENDING, NOT_ATTENDING] as const;
+const VALID_CATEGORIES = ["Side Dish", "Drinks"] as const;
+
+type AttendanceValue = (typeof VALID_ATTENDANCE)[number];
+type CategoryValue = (typeof VALID_CATEGORIES)[number];
+
 type OfferingEntry = {
   id: string;
   name: string;
   email: string;
-  attendance: string;
-  category: string;
+  attendance: AttendanceValue;
+  category: CategoryValue | "";
   offering: string;
   note: string;
 };
 
+function cleanString(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function jsonError(message: string, status: number) {
+  return NextResponse.json(
+    { success: false, error: message },
+    { status }
+  );
+}
+
 export async function POST(req: Request) {
   try {
-    const data = await req.json();
+    const body = await req.json();
+
+    const rawAttendance = cleanString(body.attendance);
+
+    if (!VALID_ATTENDANCE.includes(rawAttendance as AttendanceValue)) {
+      return jsonError("Invalid attendance value", 400);
+    }
+
+    const attendance = rawAttendance as AttendanceValue;
+    const isAttending = attendance === ATTENDING;
+
+    const name = cleanString(body.name);
+    const email = cleanString(body.email).toLowerCase();
+    const category = cleanString(body.category);
+    const offering = cleanString(body.offering);
+    const note = cleanString(body.note);
+
+    if (!name || !email || !attendance) {
+      return jsonError("Missing required fields", 400);
+    }
+
+    if (!isValidEmail(email)) {
+      return jsonError("Invalid email address", 400);
+    }
+
+    if (isAttending) {
+      if (!category || !offering) {
+        return jsonError("Offering details are required for attendees", 400);
+      }
+
+      if (!VALID_CATEGORIES.includes(category as CategoryValue)) {
+        return jsonError("Invalid category", 400);
+      }
+    }
 
     const newEntry: OfferingEntry = {
       id: crypto.randomUUID(),
-      name: data.name?.trim() || "",
-      email: data.email?.trim() || "",
-      attendance: data.attendance || "",
-      category: data.category?.trim() || "",
-      offering: data.offering?.trim() || "",
-      note: data.note?.trim() || "",
+      name,
+      email,
+      attendance,
+      category: isAttending ? (category as CategoryValue) : "",
+      offering: isAttending ? offering : "",
+      note,
     };
-
-    if (!newEntry.name || !newEntry.email || !newEntry.attendance) {
-      return NextResponse.json(
-        { success: false, error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
-    if (
-      newEntry.attendance === "Yes, I will ascend" &&
-      (!newEntry.category || !newEntry.offering)
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Offering details are required for attendees",
-        },
-        { status: 400 }
-      );
-    }
 
     const { error: insertError } = await supabaseAdmin.from("offerings").insert([
       {
@@ -67,14 +115,18 @@ export async function POST(req: Request) {
       },
     ]);
 
-if (insertError) {
-  console.error("Supabase insert error:", insertError);
-  return NextResponse.json(
-    { success: false, error: insertError.message },
-    { status: 500 }
-  );
-}
+    if (insertError) {
+      console.error("Supabase insert error:", insertError);
+      return jsonError("Failed to save offering", 500);
+    }
 
+    const escapedName = escapeHtml(newEntry.name);
+    const escapedEmail = escapeHtml(newEntry.email);
+    const escapedAttendance = escapeHtml(newEntry.attendance);
+    const escapedCategory = escapeHtml(newEntry.category || "None");
+    const escapedOffering = escapeHtml(newEntry.offering || "None");
+    const escapedNote = escapeHtml(newEntry.note || "None");
+    const editUrl = `${appUrl}/edit/${newEntry.id}`;
 
     try {
       await resend.emails.send({
@@ -82,37 +134,50 @@ if (insertError) {
         to: newEntry.email,
         subject: "Your Offering Has Been Accepted ⚡",
         html: `
-  <h2>The Gods Acknowledge You</h2>
-  <p>${newEntry.name}, your presence has been noted.</p>
-  <p><strong>You bring:</strong> ${newEntry.offering || "No offering specified"}</p>
-  <p><strong>Category:</strong> ${newEntry.category || "None"}</p>
+          <h2>The Gods Acknowledge You</h2>
+          <p>${escapedName}, your response has been recorded.</p>
+          <p><strong>Attendance:</strong> ${escapedAttendance}</p>
+          <p><strong>You bring:</strong> ${escapedOffering}</p>
+          <p><strong>Category:</strong> ${escapedCategory}</p>
+          <p><strong>Note:</strong> ${escapedNote}</p>
 
-  <p>If fate changes, you may alter your offering here:</p>
+          <p>If fate changes, you may alter your offering here:</p>
 
-  <p>
-   <a href="https://olympus-orpin.vercel.app/edit/${newEntry.id}">
-      Edit your offering
-    </a>
-  </p>
+          <p>
+            <a href="${editUrl}">Edit your offering</a>
+          </p>
 
-  <p>The feast awaits. Olympus prepares.</p>
-`,
+          <p>The feast awaits. Olympus prepares.</p>
+        `,
+      });
+
+      await resend.emails.send({
+        from: "Olympus <onboarding@resend.dev>",
+        to: adminEmail,
+        subject: "New Offering Submitted ⚡",
+        html: `
+          <h2>New Offering Received</h2>
+          <p><strong>Name:</strong> ${escapedName}</p>
+          <p><strong>Email:</strong> ${escapedEmail}</p>
+          <p><strong>Attendance:</strong> ${escapedAttendance}</p>
+          <p><strong>Category:</strong> ${escapedCategory}</p>
+          <p><strong>Offering:</strong> ${escapedOffering}</p>
+          <p><strong>Note:</strong> ${escapedNote}</p>
+          <p><strong>Edit link:</strong> <a href="${editUrl}">${editUrl}</a></p>
+        `,
       });
     } catch (emailError) {
       console.error("Resend email failed:", emailError);
 
       return NextResponse.json({
         success: true,
-        warning: "Offering saved, but confirmation email failed.",
+        warning: "Offering saved, but email failed.",
       });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error saving offering:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to save offering" },
-      { status: 500 }
-    );
+    return jsonError("Failed to save offering", 500);
   }
 }
