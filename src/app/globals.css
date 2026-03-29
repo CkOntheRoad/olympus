@@ -564,3 +564,89 @@ textarea {
     transform: none !important;
   }
 }
+.fire-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(28px);
+  opacity: 0.75;
+  z-index: 2;
+}
+
+.fire-glow-left,
+.fire-glow-right {
+  width: 170px;
+  height: 170px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 210, 120, 1) 0%,
+    rgba(255, 160, 60, 0.7) 30%,
+    rgba(255, 120, 20, 0.28) 55%,
+    transparent 75%
+  );
+}
+
+.fire-glow-left {
+  left: 3%;
+  bottom: 34%;
+}
+
+.fire-glow-right {
+  right: 3%;
+  bottom: 34%;
+}
+
+@media (min-width: 768px) {
+  .fire-glow-left,
+  .fire-glow-right {
+    width: 210px;
+    height: 210px;
+    filter: blur(30px);
+    opacity: 0.82;
+  }
+
+  .fire-glow-left {
+    left: 2%;
+    bottom: 24%;
+  }
+
+  .fire-glow-right {
+    right: 2%;
+    bottom: 24%;
+  }
+}
+.sparks {
+  position: absolute;
+  bottom: 25%;
+  left: 10%;
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+}
+
+.sparks span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 220, 120, 0.9);
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: sparkRise 4s linear infinite;
+}
+
+.sparks span:nth-child(1) { left: 20%; animation-delay: 0s; }
+.sparks span:nth-child(2) { left: 40%; animation-delay: 1s; }
+.sparks span:nth-child(3) { left: 60%; animation-delay: 2s; }
+.sparks span:nth-child(4) { left: 30%; animation-delay: 1.5s; }
+.sparks span:nth-child(5) { left: 50%; animation-delay: 0.5s; }
+
+@keyframes sparkRise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-120px) scale(0.5);
+    opacity: 0;
+  }
+}

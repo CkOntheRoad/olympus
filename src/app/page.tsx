@@ -182,7 +182,15 @@ export default function Home() {
             className="parallax-bg absolute inset-0 hidden bg-cover bg-center opacity-80 md:block"
             style={{ backgroundImage: "url('/olympus2.png')" }}
           />
-
+<div className="fire-glow fire-glow-left"></div>
+<div className="fire-glow fire-glow-right"></div>
+<div className="sparks">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
           <div
             className="parallax-bg absolute inset-0 bg-cover bg-center opacity-80 md:hidden"
             style={{ backgroundImage: "url('/olympus-mobile.png')" }}
