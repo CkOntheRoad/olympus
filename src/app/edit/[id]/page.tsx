@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
 type OfferingEntry = {
   id: string;
@@ -13,13 +14,10 @@ type OfferingEntry = {
   note: string;
 };
 
-type EditPageProps = {
-  params: {
-    id: string;
-  };
-};
+export default function EditPage() {
+  const params = useParams();
+  const id = typeof params.id === "string" ? params.id : "";
 
-export default function EditPage({ params }: EditPageProps) {
   const [entry, setEntry] = useState<OfferingEntry | null>(null);
   const [attendance, setAttendance] = useState("");
   const [loading, setLoading] = useState(true);
@@ -32,13 +30,14 @@ export default function EditPage({ params }: EditPageProps) {
     text: "",
   });
 
-  const id = params.id;
   const isAttending = attendance === "Yes, I will ascend";
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadEntry() {
+      if (!id) return;
+
       try {
         setLoading(true);
         setMessage({ type: null, text: "" });
