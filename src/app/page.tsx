@@ -452,7 +452,7 @@ export default function Home() {
                   if (selectedAttendance === "Yes, I will ascend") {
                     setFormMessage({
                       type: "success",
-                      text: result.warning || "Your offering has been recorded ⚡",
+                      text: result.warning || "Your offering has been recorded ⚡ check out the offerings page ⚡",
                     });
                     form.reset();
                     setAttendance("Yes, I will ascend");
@@ -626,7 +626,7 @@ export default function Home() {
                 href="/offerings"
                 className="text-sm uppercase tracking-[0.25em] text-gray-300 transition hover:text-white"
               >
-                View Other Offerings
+                View all Offerings
               </Link>
             </div>
           </form>
