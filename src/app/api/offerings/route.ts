@@ -132,22 +132,69 @@ export async function POST(req: Request) {
           from: "Olympus <onboarding@resend.dev>",
           to: newEntry.email,
           subject: "Your Offering Has Been Accepted ⚡",
-          html: `
-            <h2>The Gods Acknowledge You</h2>
-            <p>${escapedName}, your response has been recorded.</p>
-            <p><strong>Attendance:</strong> ${escapedAttendance}</p>
-            <p><strong>You bring:</strong> ${escapedOffering}</p>
-            <p><strong>Category:</strong> ${escapedCategory}</p>
-            <p><strong>Note:</strong> ${escapedNote}</p>
+html: `
+  <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
+    <img
+      src="https://olympus-orpin.vercel.app/olympus2.png"
+      style="width:100%; max-width:600px; border-radius:12px;"
+    />
 
-            <p>If fate changes, you may alter your offering here:</p>
+    <p style="letter-spacing:4px; font-size:12px; margin-top:30px;">
+      A DIVINE INVITATION
+    </p>
 
-            <p>
-              <a href="${editUrl}">Edit your offering</a>
-            </p>
+    <h1 style="font-size:32px; margin:10px 0;">
+      The Gathering on Olympus
+    </h1>
 
-            <p>The feast awaits. Olympus prepares.</p>
-          `,
+    <p style="font-style:italic; color:#aaa; margin-top:10px;">
+      The gods have taken notice.
+    </p>
+
+    <p style="color:#ccc; margin-top:18px;">
+      ${escapedName}, your presence has been acknowledged.
+    </p>
+
+    <div style="margin-top:25px; line-height:1.6;">
+      <p style="font-size:18px;">
+        <span style="color:#d4af37;">You bring</span><br/>
+        ${escapedOffering || "No offering specified"}
+      </p>
+
+      <p style="margin-top:12px; font-size:14px; color:#aaa;">
+        Category: ${escapedCategory || "None"}
+      </p>
+    </div>
+
+    <div style="margin:30px auto; width:60px; height:1px; background:#d4af37; opacity:0.5;"></div>
+
+    <a
+      href="${editUrl}"
+      style="
+        display:inline-block;
+        margin-top:30px;
+        padding:14px 32px;
+        border:1px solid #d4af37;
+        color:#d4af37;
+        text-decoration:none;
+        border-radius:999px;
+        letter-spacing:2px;
+        font-size:14px;
+        background:rgba(212,175,55,0.05);
+      "
+    >
+      EDIT YOUR OFFERING
+    </a>
+
+    <p style="margin-top:40px; color:#888;">
+      The feast awaits. Olympus prepares.
+    </p>
+
+    <p style="margin-top:20px; font-size:12px; color:#777; letter-spacing:2px;">
+      — OLYMPUS
+    </p>
+  </div>
+`,
         });
       }
 
