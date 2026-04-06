@@ -37,7 +37,7 @@ export default async function OfferingsPage() {
 
           <div className="mt-10">
             <Link
-              href="/"
+              href="/olympus"
               className="rounded-full border border-white/20 px-6 py-3 text-sm uppercase tracking-[0.25em] text-white transition hover:bg-white/10"
             >
               Return to Olympus
