@@ -224,13 +224,23 @@ export default function OlympusPage() {
           </h1>
 
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-gray-200 sm:text-xl">
-            The gods have grown restless.
-          </p>
+  The gods have grown restless.
+</p>
 
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
-            You already know why you are here.
-          </p>
+<p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
+  You already know why you are here:
+</p>
 
+<p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
+  Join us atop Mount Olympus for an unforgettable evening among the divine.
+</p>
+
+<p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
+  Step into a world of myth and majesty as you arrive in your favorite Greek garment — radiant, powerful, or mysterious. 
+<p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
+  Surrounded by clouds, columns, and divine company, you will be welcomed into a night of celebration, music, and immortal energy.
+</p>
+</p>
           <div className="mt-14 flex flex-col items-center justify-center gap-4">
             <a
               href="#summons"
