@@ -135,7 +135,7 @@ export async function POST(req: Request) {
 html: `
   <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
     <img
-      src="https://olympus-orpin.vercel.app/Olympus3.png"
+      src="https://olympus-orpin.vercel.app/olympus4.jpg"
       style="width:100%; max-width:600px; border-radius:12px;"
     />
 
