@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import crypto from "crypto";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 const resendApiKey = process.env.RESEND_API_KEY;
@@ -22,6 +23,16 @@ const VALID_CATEGORIES = ["Side Dish", "Drinks"] as const;
 type AttendanceValue = (typeof VALID_ATTENDANCE)[number];
 type CategoryValue = (typeof VALID_CATEGORIES)[number];
 
+type OfferingEntry = {
+  id: string;
+  name: string;
+  email: string;
+  attendance: AttendanceValue;
+  category: CategoryValue | "";
+  offering: string;
+  note: string;
+};
+
 function cleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -43,36 +54,8 @@ function jsonError(message: string, status: number) {
   return NextResponse.json({ success: false, error: message }, { status });
 }
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request) {
   try {
-    const id = params.id;
-
-    const { data, error } = await supabaseAdmin
-      .from("offerings")
-      .select("id, name, email, attendance, category, offering, note")
-      .eq("id", id)
-      .single();
-
-    if (error || !data) {
-      return jsonError("Offering not found", 404);
-    }
-
-    return NextResponse.json({ success: true, entry: data });
-  } catch (error) {
-    console.error("Error loading offering:", error);
-    return jsonError("Failed to load offering", 500);
-  }
-}
-
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const id = params.id;
     const body = await req.json();
 
     const rawAttendance = cleanString(body.attendance);
@@ -84,9 +67,19 @@ export async function POST(
     const attendance = rawAttendance as AttendanceValue;
     const isAttending = attendance === ATTENDING;
 
+    const name = cleanString(body.name);
+    const email = cleanString(body.email).toLowerCase();
     const category = cleanString(body.category);
     const offering = cleanString(body.offering);
     const note = cleanString(body.note);
+
+    if (!name || !email || !attendance) {
+      return jsonError("Missing required fields", 400);
+    }
+
+    if (!isValidEmail(email)) {
+      return jsonError("Invalid email address", 400);
+    }
 
     if (isAttending) {
       if (!category || !offering) {
@@ -98,59 +91,46 @@ export async function POST(
       }
     }
 
-    const { data: existingEntry, error: fetchError } = await supabaseAdmin
-      .from("offerings")
-      .select("id, name, email")
-      .eq("id", id)
-      .single();
+    const newEntry: OfferingEntry = {
+      id: crypto.randomUUID(),
+      name,
+      email,
+      attendance,
+      category: isAttending ? (category as CategoryValue) : "",
+      offering: isAttending ? offering : "",
+      note,
+    };
 
-    if (fetchError || !existingEntry) {
-      return jsonError("Offering not found", 404);
+    const { error: insertError } = await supabaseAdmin.from("offerings").insert([
+      {
+        id: newEntry.id,
+        name: newEntry.name,
+        email: newEntry.email,
+        attendance: newEntry.attendance,
+        category: newEntry.category || null,
+        offering: newEntry.offering || null,
+        note: newEntry.note || null,
+      },
+    ]);
+
+    if (insertError) {
+      console.error("Supabase insert error:", insertError);
+      return jsonError("Failed to save offering", 500);
     }
 
-    const name = cleanString(existingEntry.name);
-    const email = cleanString(existingEntry.email).toLowerCase();
-
-    if (!name || !email) {
-      return jsonError("Missing required entry data", 400);
-    }
-
-    if (!isValidEmail(email)) {
-      return jsonError("Invalid email address", 400);
-    }
-
-    const { error: updateError } = await supabaseAdmin
-      .from("offerings")
-      .update({
-        attendance,
-        category: isAttending ? category : null,
-        offering: isAttending ? offering : null,
-        note: note || null,
-      })
-      .eq("id", id);
-
-    if (updateError) {
-      console.error("Supabase update error:", updateError);
-      return jsonError("Failed to update offering", 500);
-    }
-
-    const escapedName = escapeHtml(name);
-    const escapedEmail = escapeHtml(email);
-    const escapedAttendance = escapeHtml(attendance);
-    const escapedCategory = escapeHtml(
-      isAttending ? category : "None"
-    );
-    const escapedOffering = escapeHtml(
-      isAttending ? offering : "None"
-    );
-    const escapedNote = escapeHtml(note || "None");
-    const editUrl = `${appUrl}/edit/${id}`;
+    const escapedName = escapeHtml(newEntry.name);
+    const escapedEmail = escapeHtml(newEntry.email);
+    const escapedAttendance = escapeHtml(newEntry.attendance);
+    const escapedCategory = escapeHtml(newEntry.category || "None");
+    const escapedOffering = escapeHtml(newEntry.offering || "None");
+    const escapedNote = escapeHtml(newEntry.note || "None");
+    const editUrl = `${appUrl}/edit/${newEntry.id}`;
 
     try {
-      if (attendance === ATTENDING) {
+      if (newEntry.attendance === ATTENDING) {
         await resend.emails.send({
           from: "Olympus <onboarding@resend.dev>",
-          to: email,
+          to: newEntry.email,
           subject: "Your Offering Has Been Accepted ⚡",
           html: `
             <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
@@ -178,11 +158,11 @@ export async function POST(
               <div style="margin-top:25px; line-height:1.6;">
                 <p style="font-size:18px;">
                   <span style="color:#d4af37;">You bring</span><br/>
-                  ${escapedOffering}
+                  ${escapedOffering || "No offering specified"}
                 </p>
 
                 <p style="margin-top:12px; font-size:14px; color:#aaa;">
-                  Category: ${escapedCategory}
+                  Category: ${escapedCategory || "None"}
                 </p>
               </div>
 
@@ -205,7 +185,7 @@ export async function POST(
       } else {
         await resend.emails.send({
           from: "Olympus <onboarding@resend.dev>",
-          to: email,
+          to: newEntry.email,
           subject: "Olympus Mourns Your Absence ⚡",
           html: `
             <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
@@ -256,14 +236,14 @@ export async function POST(
         from: "Olympus <onboarding@resend.dev>",
         to: adminEmail,
         subject:
-          attendance === ATTENDING
-            ? "Offering Updated / Guest Now Attending ⚡"
-            : "RSVP Updated / Guest Declined ⚡",
+          newEntry.attendance === ATTENDING
+            ? "New Offering Submitted ⚡"
+            : "Guest Declined the Summons ⚡",
         html: `
           <h2>${
-            attendance === ATTENDING
-              ? "A Guest Updated Their RSVP To Attending"
-              : "A Guest Updated Their RSVP To Not Attending"
+            newEntry.attendance === ATTENDING
+              ? "New Offering Received"
+              : "A Guest Declined"
           }</h2>
           <p><strong>Name:</strong> ${escapedName}</p>
           <p><strong>Email:</strong> ${escapedEmail}</p>
@@ -279,13 +259,13 @@ export async function POST(
 
       return NextResponse.json({
         success: true,
-        warning: "Offering updated, but email failed.",
+        warning: "Offering saved, but email failed.",
       });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error updating offering:", error);
-    return jsonError("Failed to update offering", 500);
+    console.error("Error saving offering:", error);
+    return jsonError("Failed to save offering", 500);
   }
 }
