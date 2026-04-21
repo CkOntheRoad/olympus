@@ -211,7 +211,7 @@ export async function POST(req: Request) {
         </p>
 
         <p style="color:#bbb; margin-top:18px;">
-          I am being dramatically wounded by your absence.
+          You will be very missed :(
         </p>
 
         <div style="margin:30px auto; width:60px; height:1px; background:#d4af37; opacity:0.5;"></div>
