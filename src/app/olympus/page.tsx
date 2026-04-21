@@ -236,10 +236,11 @@ export default function OlympusPage() {
 </p>
 
 <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
-  Step into a world of myth and majesty as you arrive in your favorite Greek garment — radiant, powerful, or mysterious. 
+  Step into a world of myth and majesty as you arrive in your favorite Greek garment — radiant, powerful, or mysterious.
+</p>
+
 <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
   Surrounded by clouds, columns, and divine company, you will be welcomed into a night of celebration, music, and immortal energy.
-</p>
 </p>
           <div className="mt-14 flex flex-col items-center justify-center gap-4">
             <a
