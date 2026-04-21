@@ -128,75 +128,109 @@ export async function POST(req: Request) {
 
     try {
       if (newEntry.attendance === ATTENDING) {
-        await resend.emails.send({
-          from: "Olympus <onboarding@resend.dev>",
-          to: newEntry.email,
-          subject: "Your Offering Has Been Accepted ⚡",
-html: `
-  <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
-    <img
-      src="https://olympus-orpin.vercel.app/olympus4.jpg"
-      style="width:100%; max-width:600px; border-radius:12px;"
-    />
+  await resend.emails.send({
+    from: "Olympus <onboarding@resend.dev>",
+    to: newEntry.email,
+    subject: "Your Offering Has Been Accepted ⚡",
+    html: `
+      <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
+        <img
+          src="${appUrl}/olympus4.jpg"
+          style="width:100%; max-width:600px; border-radius:12px;"
+        />
 
-    <p style="letter-spacing:4px; font-size:12px; margin-top:30px;">
-      A DIVINE INVITATION
-    </p>
+        <p style="letter-spacing:4px; font-size:12px; margin-top:30px;">
+          A DIVINE INVITATION
+        </p>
 
-    <h1 style="font-size:32px; margin:10px 0;">
-      The Gathering on Olympus
-    </h1>
+        <h1 style="font-size:32px; margin:10px 0;">
+          The Gathering on Olympus
+        </h1>
 
-    <p style="font-style:italic; color:#aaa; margin-top:10px;">
-      The gods have taken notice.
-    </p>
+        <p style="font-style:italic; color:#aaa; margin-top:10px;">
+          The gods have taken notice.
+        </p>
 
-    <p style="color:#ccc; margin-top:18px;">
-      ${escapedName}, your presence has been acknowledged.
-    </p>
+        <p style="color:#ccc; margin-top:18px;">
+          ${escapedName}, your presence has been acknowledged.
+        </p>
 
-    <div style="margin-top:25px; line-height:1.6;">
-      <p style="font-size:18px;">
-        <span style="color:#d4af37;">You bring</span><br/>
-        ${escapedOffering || "No offering specified"}
-      </p>
+        <div style="margin-top:25px; line-height:1.6;">
+          <p style="font-size:18px;">
+            <span style="color:#d4af37;">You bring</span><br/>
+            ${escapedOffering || "No offering specified"}
+          </p>
 
-      <p style="margin-top:12px; font-size:14px; color:#aaa;">
-        Category: ${escapedCategory || "None"}
-      </p>
-    </div>
+          <p style="margin-top:12px; font-size:14px; color:#aaa;">
+            Category: ${escapedCategory || "None"}
+          </p>
+        </div>
 
-    <div style="margin:30px auto; width:60px; height:1px; background:#d4af37; opacity:0.5;"></div>
+        <div style="margin:30px auto; width:60px; height:1px; background:#d4af37; opacity:0.5;"></div>
 
-    <a
-      href="${editUrl}"
-      style="
-        display:inline-block;
-        margin-top:30px;
-        padding:14px 32px;
-        border:1px solid #d4af37;
-        color:#d4af37;
-        text-decoration:none;
-        border-radius:999px;
-        letter-spacing:2px;
-        font-size:14px;
-        background:rgba(212,175,55,0.05);
-      "
-    >
-      EDIT YOUR OFFERING
-    </a>
+        <a href="${editUrl}" style="display:inline-block;margin-top:30px;padding:14px 32px;border:1px solid #d4af37;color:#d4af37;text-decoration:none;border-radius:999px;letter-spacing:2px;font-size:14px;background:rgba(212,175,55,0.05);">
+          EDIT YOUR OFFERING
+        </a>
 
-    <p style="margin-top:40px; color:#888;">
-      The feast awaits. Olympus prepares.
-    </p>
+        <p style="margin-top:40px; color:#888;">
+          The feast awaits. Olympus prepares.
+        </p>
 
-    <p style="margin-top:20px; font-size:12px; color:#777; letter-spacing:2px;">
-      — OLYMPUS
-    </p>
-  </div>
-`,
-        });
-      }
+        <p style="margin-top:20px; font-size:12px; color:#777; letter-spacing:2px;">
+          — OLYMPUS
+        </p>
+      </div>
+    `,
+  });
+} else {
+  await resend.emails.send({
+    from: "Olympus <onboarding@resend.dev>",
+    to: newEntry.email,
+    subject: "Olympus Mourns Your Absence ⚡",
+    html: `
+      <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
+        <img
+          src="${appUrl}/olympus5.png"
+          style="width:100%; max-width:600px; border-radius:12px;"
+        />
+
+        <p style="letter-spacing:4px; font-size:12px; margin-top:30px;">
+          A DIVINE LAMENT
+        </p>
+
+        <h1 style="font-size:32px; margin:10px 0;">
+          The Gathering on Olympus
+        </h1>
+
+        <p style="font-style:italic; color:#aaa; margin-top:10px;">
+          Even the gods know disappointment.
+        </p>
+
+        <p style="color:#ccc; margin-top:18px;">
+          ${escapedName}, Olympus has received word that fate keeps you away.
+        </p>
+
+        <p style="color:#bbb; margin-top:18px;">
+          I am being dramatically wounded by your absence.
+        </p>
+
+        <div style="margin:30px auto; width:60px; height:1px; background:#d4af37; opacity:0.5;"></div>
+
+        <a href="${editUrl}" style="display:inline-block;margin-top:30px;padding:14px 32px;border:1px solid #d4af37;color:#d4af37;text-decoration:none;border-radius:999px;letter-spacing:2px;font-size:14px;background:rgba(212,175,55,0.05);">
+          I CHANGED MY MIND
+        </a>
+
+        <p style="margin-top:40px; color:#888;">
+          Zeus is pretending not to take this personally.
+        </p>
+
+        <p style="margin-top:20px; font-size:12px; color:#777; letter-spacing:2px;">
+          — OLYMPUS
+        </p>
+      </div>
+    `,
+  });
+}
 
       await resend.emails.send({
         from: "Olympus <onboarding@resend.dev>",
