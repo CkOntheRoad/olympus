@@ -244,101 +244,100 @@ export default function OlympusPage() {
           </div>
         </div>
       </section>
+{/* OLYMPUS SEAL */}
+
+{/* INVITATION + DETAILS */}
+<section className="relative overflow-hidden bg-gradient-to-b from-black via-zinc-950 to-black py-20 sm:py-28">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,215,0,0.12),transparent_45%)] opacity-30" />
+
+  <div className="relative z-10 mx-auto max-w-6xl px-6">
+    <div className="mb-12 text-center">
+      <p className="mb-4 text-sm uppercase tracking-[0.4em] text-yellow-200/70">
+        A Divine Summons
+      </p>
+
+      <h2 className="olympus-heading text-4xl font-semibold tracking-[0.03em] text-white sm:text-5xl">
+        The Invitation
+      </h2>
+
+      <div className="mx-auto mt-6 h-px w-28 bg-gradient-to-r from-transparent via-yellow-200/60 to-transparent" />
+    </div>
+
+    <div className="grid items-center gap-12 lg:grid-cols-2">
+      {/* VIDEO */}
+      <div className="flex justify-center">
+        <video
+          controls
+          playsInline
+          preload="metadata"
+          poster="/olympuslogo.png"
+          className="w-full max-w-sm rounded-2xl border border-yellow-200/20 shadow-[0_0_30px_rgba(255,215,0,0.12)]"
+        >
+          <source src="/inviteolympus.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* DETAILS */}
-      <section className="reveal reveal-delay-1 relative overflow-hidden bg-gradient-to-b from-black via-zinc-900 to-black py-20 text-center sm:py-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,215,0,0.25),transparent_40%)] opacity-20" />
-
-        <div className="relative z-10 mx-auto max-w-3xl px-6">
-          <p className="mb-4 text-sm uppercase tracking-[0.4em] text-yellow-200/70">
-            A Divine Summons
-          </p>
-
-          <h2 className="olympus-heading mb-10 text-4xl font-semibold tracking-[0.03em] text-white sm:text-5xl">
-            The Details
-          </h2>
-
-          <div className="mt-14 space-y-6 text-center">
-            <p className="text-4xl font-semibold tracking-[0.08em] text-yellow-100/90 sm:text-5xl">
-              20 June
+      <div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-3xl border border-white/10 bg-black/30 p-6 text-center">
+            <p className="text-xs uppercase tracking-[0.3em] text-yellow-200/60">
+              Date
             </p>
-
-            <div className="mx-auto h-px w-24 bg-gradient-to-r from-transparent via-yellow-200/60 to-transparent animate-[divineLine_4s_ease-in-out_infinite]" />
-
-            <p className="text-xl tracking-[0.3em] text-yellow-200/70 sm:text-2xl">
-              18:00
+            <p className="mt-3 text-4xl font-semibold text-yellow-100">
+              20 June
             </p>
           </div>
 
-          <div className="location-panel mt-14">
-            <div className="location-info">
-              <p className="text-xs uppercase tracking-[0.35em] text-yellow-200/65">
-                Path to Olympus
-              </p>
+          <div className="rounded-3xl border border-white/10 bg-black/30 p-6 text-center">
+            <p className="text-xs uppercase tracking-[0.3em] text-yellow-200/60">
+              Time
+            </p>
+            <p className="mt-3 text-4xl font-semibold text-yellow-100">
+              18:00
+            </p>
+          </div>
+        </div>
 
-              <h3 className="olympus-heading mt-4 text-2xl font-semibold text-white sm:text-3xl">
+        <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-black/30">
+          <div className="grid lg:grid-cols-2">
+            <div className="p-6 text-center sm:p-8 lg:text-left">
+              <h3 className="text-2xl font-semibold text-white">
                 45a, rue Principale
               </h3>
 
-              <p className="mt-3 text-base text-gray-400">6990 Rameldange</p>
+              <p className="mt-2 text-gray-400">6990 Rameldange</p>
 
-              <p className="mt-6 max-w-sm text-sm leading-7 text-gray-500">
+              <p className="mt-4 text-sm text-gray-500">
                 The road is known. Follow it well.
               </p>
 
-              <a
-                href="https://maps.google.com/?q=45a%20rue%20Principale%2C%206990%20Rameldange"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="olympus-button mt-8 inline-flex w-fit rounded-full border border-yellow-200/40 bg-yellow-200/10 px-6 py-3 text-sm uppercase tracking-[0.25em] text-yellow-100 transition hover:bg-yellow-200/20"
-              >
-                Open the Path
-              </a>
+              <div className="mt-6 flex justify-center lg:justify-start">
+                <a
+                  href="https://maps.google.com/?q=45a%20rue%20Principale%2C%206990%20Rameldange"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-yellow-200/40 bg-yellow-200/10 px-6 py-2 text-sm uppercase tracking-[0.2em] text-yellow-100 transition hover:bg-yellow-200/20"
+                >
+                  Open the Path
+                </a>
+              </div>
             </div>
 
-            <div className="location-map">
-              <div className="map-overlay" />
-
+            <div className="relative min-h-[250px]">
               <iframe
-                title="Map to Rameldange"
+                title="Map"
                 src="https://www.google.com/maps?q=45a%20rue%20Principale%2C%206990%20Rameldange&output=embed"
-                className="map-frame"
+                className="absolute inset-0 h-full w-full"
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
           </div>
         </div>
-      </section>
-
-      {/* LIVE BAND */}
-      <section className="reveal reveal-delay-1 relative overflow-hidden py-20 sm:py-28">
-        <div className="absolute inset-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-40"
-            style={{ backgroundImage: "url('/music.png')" }}
-          />
-          <div className="absolute inset-0 bg-black/45" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_50%)]" />
-        </div>
-
-        <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
-          <p className="mb-4 text-sm uppercase tracking-[0.4em] text-yellow-200/70">
-            Sound from Above
-          </p>
-
-          <h2 className="olympus-heading mb-6 text-4xl font-semibold tracking-[0.03em] text-white sm:text-5xl">
-            Music for the Gods
-          </h2>
-
-          <p className="max-w-2xl text-lg leading-9 text-gray-300">
-            Even Olympus requires a rhythm.
-            <br />
-            A live performance will carry the night.
-          </p>
-        </div>
-      </section>
-
+      </div>
+    </div>
+  </div>
+</section>
       {/* DRESS CODE */}
       <section className="reveal reveal-delay-3 relative overflow-hidden bg-gradient-to-b from-black via-zinc-900 to-black py-20 text-center sm:py-28">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(255,215,0,0.2),transparent_40%)] opacity-20" />
