@@ -53,7 +53,7 @@ export default async function OfferingsPage() {
 
   <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm">
     <div className="w-full overflow-x-auto [-webkit-overflow-scrolling:touch]">
-      <table className="w-[760px] text-left text-sm">
+      <table className="w-full min-w-[760px] text-left text-sm">
         <thead className="border-b border-white/10 bg-white/5 text-xs uppercase tracking-[0.25em] text-yellow-100/80">
           <tr>
             <th className="px-6 py-4">Name</th>
