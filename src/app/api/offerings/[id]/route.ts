@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL || "https://olympus-orpin.vercel.app";
+  process.env.NEXT_PUBLIC_APP_URL || "https://www.kyster.pro";
 const adminEmail = process.env.ADMIN_EMAIL || "chriskyster@gmail.com";
 
 if (!resendApiKey) {

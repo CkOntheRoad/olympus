@@ -46,40 +46,46 @@ export default async function OfferingsPage() {
         </div>
       </section>
 
-      <section className="px-6 pb-24">
-        <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-white/10 bg-white/5 text-xs uppercase tracking-[0.25em] text-yellow-100/80">
-              <tr>
-                <th className="px-6 py-4">Name</th>
-                <th className="px-6 py-4">Category</th>
-                <th className="px-6 py-4">Offering</th>
-              </tr>
-            </thead>
+      <section className="px-4 pb-24 sm:px-6">
+  <p className="mx-auto mb-3 max-w-4xl text-xs uppercase tracking-[0.25em] text-yellow-200/50">
+    Swipe sideways to see all offerings →
+  </p>
 
-            <tbody className="text-gray-200">
-              {offerings && offerings.length > 0 ? (
-                offerings.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-white/10 last:border-b-0"
-                  >
-                    <td className="px-6 py-4">{item.name}</td>
-                    <td className="px-6 py-4">{item.category}</td>
-                    <td className="px-6 py-4">{item.offering}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td className="px-6 py-6 text-gray-400" colSpan={3}>
-                    No offerings have been pledged yet.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
+  <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm">
+    <div className="w-full overflow-x-auto [-webkit-overflow-scrolling:touch]">
+      <table className="w-[760px] text-left text-sm">
+        <thead className="border-b border-white/10 bg-white/5 text-xs uppercase tracking-[0.25em] text-yellow-100/80">
+          <tr>
+            <th className="px-6 py-4">Name</th>
+            <th className="px-6 py-4">Category</th>
+            <th className="px-6 py-4">Offering</th>
+          </tr>
+        </thead>
+
+        <tbody className="text-gray-200">
+          {offerings && offerings.length > 0 ? (
+            offerings.map((item) => (
+              <tr
+                key={item.id}
+                className="border-b border-white/10 last:border-b-0"
+              >
+                <td className="px-6 py-4">{item.name}</td>
+                <td className="px-6 py-4">{item.category}</td>
+                <td className="px-6 py-4">{item.offering}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td className="px-6 py-6 text-gray-400" colSpan={3}>
+                No offerings have been pledged yet.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
     </main>
   );
 }
