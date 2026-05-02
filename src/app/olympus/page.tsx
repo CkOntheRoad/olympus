@@ -223,10 +223,6 @@ export default function OlympusPage() {
             The Gathering on Olympus
           </h1>
 
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-gray-200 sm:text-xl">
-  The gods have grown restless.
-</p>
-
 <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
   You already know why you are here:
 </p>
@@ -360,7 +356,12 @@ export default function OlympusPage() {
             The gods do not welcome the ordinary.
             <br />
             Dress accordingly.
+            <br />
+            You will be judged... and perhaps be the one to take home a trophy
           </p>
+
+
+          
         </div>
       </section>
 
