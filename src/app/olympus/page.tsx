@@ -220,7 +220,7 @@ export default function OlympusPage() {
           </p>
 
           <h1 className="olympus-heading text-5xl font-semibold leading-tight tracking-[0.05em] drop-shadow-[0_0_20px_rgba(255,215,0,0.15)] sm:text-6xl md:text-7xl">
-            The Gathering on Olympus
+            The Gathering on Olympus 
           </h1>
 
 
