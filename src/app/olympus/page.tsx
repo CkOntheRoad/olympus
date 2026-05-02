@@ -358,10 +358,10 @@ export default function OlympusPage() {
   Dress accordingly.
   <br />
   <span className="text-yellow-200">
-    You <span className="italic">will</span> be judged... and perhaps be the one to take home a trophy
-  </span>
+    You <span className="italic">will</span> be judged...
+  </span>{" "}
+  and perhaps be the one to take home a trophy
 </p>
-          
         </div>
       </section>
 
