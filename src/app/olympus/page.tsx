@@ -232,11 +232,7 @@ export default function OlympusPage() {
 </p>
 
 <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
-  Join us atop Mount Olympus for an unforgettable evening among the divine.
-</p>
-
-<p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
-  Step into a world of myth and majesty as you arrive in your favorite Greek garment — radiant, powerful, or mysterious.
+  Join us atop Mount Olympus for an unforgettable evening among the divine. Step into a world of myth and majesty as you arrive in your favorite Greek garment — radiant, powerful, or mysterious.
 </p>
 
 <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
@@ -274,7 +270,7 @@ export default function OlympusPage() {
             <div className="mx-auto h-px w-24 bg-gradient-to-r from-transparent via-yellow-200/60 to-transparent animate-[divineLine_4s_ease-in-out_infinite]" />
 
             <p className="text-xl tracking-[0.3em] text-yellow-200/70 sm:text-2xl">
-              17:00
+              18:00
             </p>
           </div>
 
