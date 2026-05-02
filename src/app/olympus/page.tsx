@@ -352,15 +352,15 @@ export default function OlympusPage() {
             Appearance Matters
           </h2>
 
-          <p className="text-lg leading-9 text-gray-300">
-            The gods do not welcome the ordinary.
-            <br />
-            Dress accordingly.
-            <br />
-            You will be judged... and perhaps be the one to take home a trophy
-          </p>
-
-
+<p className="text-lg leading-9 text-gray-300">
+  The gods do not welcome the ordinary.
+  <br />
+  Dress accordingly.
+  <br />
+  <span className="text-yellow-200">
+    You <span className="italic">will</span> be judged... and perhaps be the one to take home a trophy
+  </span>
+</p>
           
         </div>
       </section>
