@@ -223,9 +223,6 @@ export default function OlympusPage() {
             The Gathering on Olympus
           </h1>
 
-<p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
-  You already know why you are here:
-</p>
 
 <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
   Join us atop Mount Olympus for an unforgettable evening among the divine. Step into a world of myth and majesty as you arrive in your favorite Greek garment — radiant, powerful, or mysterious.
