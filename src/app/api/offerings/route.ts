@@ -129,7 +129,7 @@ export async function POST(req: Request) {
     try {
       if (newEntry.attendance === ATTENDING) {
         await resend.emails.send({
-          from: "Olympus <no-reply@kyster.pro>",
+          from: "Olympus <summons@kyster.pro>",
 replyTo: "chriskyster@gmail.com",
           to: newEntry.email,
           subject: "Your Offering Has Been Accepted",
@@ -185,7 +185,7 @@ replyTo: "chriskyster@gmail.com",
         });
       } else {
         await resend.emails.send({
-            from: "Olympus <no-reply@kyster.pro>",
+            from: "Olympus <summons@kyster.pro>",
   replyTo: "chriskyster@gmail.com",
           to: newEntry.email,
           subject: "Olympus Mourns Your Absence ⚡",
