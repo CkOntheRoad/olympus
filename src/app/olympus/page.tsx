@@ -270,7 +270,7 @@ export default function OlympusPage() {
           poster="/olympuslogo.png"
           className="w-full max-w-sm rounded-2xl border border-yellow-200/20 shadow-[0_0_30px_rgba(255,215,0,0.12)]"
         >
-          <source src="/invite_olympus.mp4" type="video/mp4" />
+          <source src="/inviteolympus.mp4" type="video/mp4" />
         </video>
       </div>
 

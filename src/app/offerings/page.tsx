@@ -47,9 +47,7 @@ export default async function OfferingsPage() {
       </section>
 
       <section className="px-4 pb-24 sm:px-6">
-  <p className="mx-auto mb-3 max-w-4xl text-xs uppercase tracking-[0.25em] text-yellow-200/50">
-    Swipe sideways to see all offerings →
-  </p>
+
 
   <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm">
     <div className="w-full overflow-x-auto [-webkit-overflow-scrolling:touch]">

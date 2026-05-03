@@ -129,7 +129,8 @@ export async function POST(req: Request) {
     try {
       if (newEntry.attendance === ATTENDING) {
         await resend.emails.send({
-          from: "Olympus <onboarding@resend.dev>",
+          from: "Olympus <no-reply@kyster.pro>",
+replyTo: "chriskyster@gmail.com",
           to: newEntry.email,
           subject: "Your Offering Has Been Accepted ⚡",
           html: `
@@ -184,7 +185,8 @@ export async function POST(req: Request) {
         });
       } else {
         await resend.emails.send({
-          from: "Olympus <onboarding@resend.dev>",
+            from: "Olympus <no-reply@kyster.pro>",
+  replyTo: "chriskyster@gmail.com",
           to: newEntry.email,
           subject: "Olympus Mourns Your Absence ⚡",
           html: `
@@ -233,7 +235,8 @@ export async function POST(req: Request) {
       }
 
       await resend.emails.send({
-        from: "Olympus <onboarding@resend.dev>",
+          from: "Olympus <no-reply@kyster.pro>",
+  replyTo: "chriskyster@gmail.com",
         to: adminEmail,
         subject:
           newEntry.attendance === ATTENDING
