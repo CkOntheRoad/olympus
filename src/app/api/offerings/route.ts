@@ -132,7 +132,7 @@ export async function POST(req: Request) {
           from: "Olympus <no-reply@kyster.pro>",
 replyTo: "chriskyster@gmail.com",
           to: newEntry.email,
-          subject: "Your Offering Has Been Accepted ⚡",
+          subject: "Your Offering Has Been Accepted",
           html: `
             <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
               <img
@@ -240,8 +240,8 @@ replyTo: "chriskyster@gmail.com",
         to: adminEmail,
         subject:
           newEntry.attendance === ATTENDING
-            ? "New Offering Submitted ⚡"
-            : "Guest Declined the Summons ⚡",
+            ? "New Offering Submitted"
+            : "Guest Declined the Summons",
         html: `
           <h2>${
             newEntry.attendance === ATTENDING

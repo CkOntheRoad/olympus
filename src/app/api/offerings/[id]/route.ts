@@ -145,9 +145,9 @@ export async function POST(
     try {
       if (attendance === ATTENDING) {
         await resend.emails.send({
-          from: "Olympus <onboarding@resend.dev>",
+          from: "Olympus <no-reply@kyster.pro>",
           to: email,
-          subject: "Your Offering Has Been Accepted ⚡",
+          subject: "Your Offering Has Been Accepted",
           html: `
             <div style="background:#0a0a0a; padding:40px; text-align:center; color:#f5e6b3; font-family:Georgia, serif;">
               <img
