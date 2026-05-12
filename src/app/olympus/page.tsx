@@ -231,11 +231,11 @@ export default function OlympusPage() {
 <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-gray-300">
   Surrounded by clouds, columns, and divine company, you will be welcomed into a night of celebration, music, and immortal energy.
 </p>
-<p className="mx-auto max-w-2xl text-sm leading-7 italic text-yellow-100/85 sm:text-base">
+<p className="mx-auto mt-8 max-w-2xl text-sm leading-7 italic text-yellow-100/85 sm:text-base">
   By decree of Olympus:
   <br />
   this gathering is reserved for gods and goddesses only —
-  no little demigods this time.
+   young demigods shall remain in mortal care this time. 
 </p>
 
           <div className="mt-14 flex flex-col items-center justify-center gap-4">
